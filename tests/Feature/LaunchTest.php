@@ -173,6 +173,36 @@ class LaunchTest extends TestCase
         \Illuminate\Support\Facades\Storage::disk('public')->assertMissing($second);
     }
 
+    public function test_storage_route_serves_only_uploaded_images(): void
+    {
+        $dir = storage_path('app/public/avatars');
+        @mkdir($dir, 0775, true);
+        $file = $dir . '/zz-storage-route-test.png';
+        file_put_contents($file, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='));
+        file_put_contents($dir . '/zz-note.txt', 'secret');
+
+        try {
+            $this->get('/storage/avatars/zz-storage-route-test.png')->assertOk()->assertHeader('Content-Type', 'image/png');
+            $this->get('/storage/avatars/missing.png')->assertNotFound();
+            $this->get('/storage/avatars/zz-note.txt')->assertNotFound();          // not an image
+            $this->get('/storage/../../.env')->assertNotFound();                   // can't leave the folder
+            $this->get('/storage/%2e%2e/%2e%2e/.env')->assertNotFound();
+        } finally {
+            @unlink($file);
+            @unlink($dir . '/zz-note.txt');
+        }
+    }
+
+    public function test_public_path_can_point_at_public_html(): void
+    {
+        $tmp = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'lk_public_html_' . uniqid();
+        mkdir($tmp);
+        config(['app.public_path' => $tmp]);
+        (new \App\Providers\AppServiceProvider($this->app))->register();
+        $this->assertSame($tmp, public_path());
+        rmdir($tmp);
+    }
+
     public function test_email_change_needs_code_from_new_address(): void
     {
         Mail::fake();

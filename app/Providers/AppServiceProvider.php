@@ -11,7 +11,12 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        //
+        // Shared hosting: public/ lives in public_html. Point public_path() there for both the
+        // website and artisan (storage:link, asset versioning), so nothing has to be copied twice.
+        $publicPath = config('app.public_path');
+        if ($publicPath && is_dir($publicPath)) {
+            $this->app->instance('path.public', rtrim($publicPath, '/\\'));
+        }
     }
 
     public function boot()

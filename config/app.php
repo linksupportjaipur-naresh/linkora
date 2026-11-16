@@ -54,6 +54,12 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    /*
+    | Shared hosting: absolute path of the web root (e.g. /home/u123/public_html) when the
+    | contents of public/ were moved there. Leave empty when the web root is this app's public/ folder.
+    */
+    'public_path' => env('PUBLIC_PATH'),
+
     'asset_url' => env('ASSET_URL', null),
 
     /*

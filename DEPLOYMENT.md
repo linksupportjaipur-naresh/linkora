@@ -127,11 +127,14 @@ php artisan up
 
 ## Shared hosting (cPanel / Hostinger)
 
-Upload everything except `public/` above `public_html`, put the contents of
-`public/` in `public_html`, and update the two paths in `public_html/index.php`
-to point at the app folder. Create the database in cPanel, use **Terminal** (or
-SSH) for the artisan commands, enable **AutoSSL/Let's Encrypt** for HTTPS, and
-add the cron job under **Cron Jobs**.
+Step-by-step guide: **[DEPLOY-SHARED-HOSTING.md](DEPLOY-SHARED-HOSTING.md)**. In short:
+the app goes in `~/linkora`, the contents of `public/` go in `public_html` with
+`deploy/shared-hosting/index.php` as its `index.php`, and `PUBLIC_PATH` in `.env`
+points at `public_html`. Without SSH, `bash deploy/build-package.sh` builds two
+upload-ready zips. If the host blocks symlinks, uploaded photos are served by the
+`/storage/{path}` route instead of `storage:link`.
+
+Note: Vercel cannot run this app (it serves `index.php` as a download).
 
 ## Upgrade note
 

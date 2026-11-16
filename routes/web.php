@@ -170,6 +170,10 @@ Route::middleware(['auth', 'active', 'admin'])->prefix('admin')->name('admin.')-
 | Public profile pages — keep these LAST so they never shadow other routes
 |--------------------------------------------------------------------------
 */
+// Uploaded photos when the host doesn't allow the public/storage symlink. With the symlink in place the web
+// server serves these files directly and this route is never reached.
+Route::get('/storage/{path}', \App\Http\Controllers\StorageFileController::class)->where('path', '.*')->name('storage.file');
+
 Route::get('/l/{link}', [PublicProfileController::class, 'click'])->whereNumber('link')->middleware('throttle:120,1')->name('link.go');
 Route::get('/{username}', [PublicProfileController::class, 'show'])
     ->where('username', '[A-Za-z0-9](?:[A-Za-z0-9_.-]{1,28}[A-Za-z0-9])?')
