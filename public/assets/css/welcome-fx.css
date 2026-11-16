@@ -1,0 +1,88 @@
+/* ==========================================================================
+   Dashboard welcome banner — motion-graphic background
+   Layers (back → front): aurora · perspective grid · canvas "taps" · orbiting apps · light sweep · readability scrim.
+   Animations pause when the banner is off screen (.is-live set by welcome-fx.js) and stop for reduced motion.
+   ========================================================================== */
+.welcome-card[data-wc] { background: linear-gradient(120deg, #5B3BD6 0%, #7955E8 45%, #9A7BFF 100%); isolation: isolate; min-height: 230px;
+  --px: 0px; --py: 0px; }
+.welcome-card[data-wc]::after { display: none; }
+.welcome-card > .wc-fx { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
+/* keep the copy readable on the left */
+.wc-fx::after { content: ""; position: absolute; inset: 0; z-index: 6;
+  background: linear-gradient(90deg, rgba(76, 44, 190, .62) 0%, rgba(76, 44, 190, .32) 42%, transparent 68%); }
+
+/* Aurora */
+.wc-aurora i { position: absolute; border-radius: 50%; filter: blur(46px); mix-blend-mode: screen; opacity: .75;
+  translate: calc(var(--px) * -0.6) calc(var(--py) * -0.6); }
+.wc-aurora i:nth-child(1) { width: 320px; height: 320px; right: 6%; top: -45%; background: #F0ABFC; animation: wcBlobA 11s ease-in-out infinite alternate; }
+.wc-aurora i:nth-child(2) { width: 280px; height: 280px; right: 30%; bottom: -60%; background: #60A5FA; opacity: .55; animation: wcBlobB 14s ease-in-out infinite alternate; }
+.wc-aurora i:nth-child(3) { width: 220px; height: 220px; left: -8%; top: -40%; background: #C4B5FD; opacity: .5; animation: wcBlobA 16s ease-in-out infinite alternate-reverse; }
+.wc-aurora i:nth-child(4) { width: 180px; height: 180px; right: -6%; bottom: -30%; background: #FB7185; opacity: .45; animation: wcBlobB 9s ease-in-out infinite alternate; }
+@keyframes wcBlobA { to { transform: translate(-70px, 40px) scale(1.25); } }
+@keyframes wcBlobB { to { transform: translate(60px, -36px) scale(.85); } }
+
+/* Synthwave-style grid floor */
+.wc-grid { position: absolute; left: -30%; right: -30%; bottom: -55%; height: 110%; opacity: .5;
+  background-image: linear-gradient(rgba(255,255,255,.22) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.22) 1px, transparent 1px);
+  background-size: 44px 44px; transform: perspective(380px) rotateX(64deg); transform-origin: 50% 0;
+  -webkit-mask-image: linear-gradient(transparent, #000 35%, #000 70%, transparent); mask-image: linear-gradient(transparent, #000 35%, #000 70%, transparent);
+  animation: wcGrid 2.4s linear infinite; }
+@keyframes wcGrid { to { background-position: 0 44px, 0 0; } }
+
+.wc-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; }
+
+/* Orbit system around your link */
+.wc-orbit { position: absolute; z-index: 3; right: -70px; top: 50%; width: 340px; height: 340px; margin-top: -170px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 22%, #000 52%); mask-image: linear-gradient(90deg, transparent 22%, #000 52%);
+  translate: calc(var(--px) * 0.8) calc(var(--py) * 0.8); transition: translate .5s cubic-bezier(.2,.8,.2,1); }
+.wc-ring { position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 1.5px dashed rgba(255,255,255,.32); }
+.wc-ring.r1 { width: 140px; height: 140px; margin: -70px 0 0 -70px; animation: wcSpin 30s linear infinite; }
+.wc-ring.r2 { width: 220px; height: 220px; margin: -110px 0 0 -110px; border-style: solid; border-color: rgba(255,255,255,.16); animation: wcSpin 50s linear infinite reverse; }
+.wc-ring.r3 { width: 310px; height: 310px; margin: -155px 0 0 -155px; border-color: rgba(255,255,255,.2); animation: wcSpin 70s linear infinite; }
+@keyframes wcSpin { to { transform: rotate(360deg); } }
+
+.wc-core { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.35rem; color: #fff;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.55), rgba(255,255,255,.12) 60%);
+  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.55), 0 0 30px rgba(255,255,255,.55), 0 0 70px rgba(240,171,252,.6);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: wcBreath 3.2s ease-in-out infinite; }
+.wc-core i { filter: drop-shadow(0 2px 6px rgba(60,20,160,.5)); }
+.wc-core b { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,255,255,.7); animation: wcPing 2.6s ease-out infinite; }
+.wc-core b + b { animation-delay: 1.3s; }
+.wc-core.hit { animation: wcHit .45s cubic-bezier(.2,.8,.2,1); }
+@keyframes wcBreath { 50% { box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.7), 0 0 40px rgba(255,255,255,.75), 0 0 90px rgba(240,171,252,.8); } }
+@keyframes wcPing { 0% { transform: scale(1); opacity: .8; } 100% { transform: scale(2.6); opacity: 0; } }
+@keyframes wcHit { 40% { transform: scale(1.22); } 100% { transform: scale(1); } }
+
+/* Planets: the orbit spins the carrier, the inner chip spins back so icons stay upright */
+.wc-planet { position: absolute; left: 50%; top: 50%; width: 0; height: 0; --r: 70px; --d: 18s;
+  transform: rotate(var(--a)) translateX(var(--r)); animation: wcOrbit var(--d) linear infinite; }
+.wc-planet.r2 { --r: 110px; --d: 28s; animation-direction: reverse; }
+.wc-planet.r3 { --r: 155px; --d: 40s; }
+.wc-planet > span { position: absolute; left: -17px; top: -17px; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center;
+  background: #fff; color: var(--c); font-size: .95rem; box-shadow: 0 8px 18px -6px rgba(30,10,90,.55), 0 0 0 3px rgba(255,255,255,.25);
+  transform: rotate(calc(-1 * var(--a))); animation: wcCounter var(--d) linear infinite; }
+.wc-planet.r2 > span { animation-direction: reverse; }
+@keyframes wcOrbit { from { transform: rotate(var(--a)) translateX(var(--r)); } to { transform: rotate(calc(var(--a) + 360deg)) translateX(var(--r)); } }
+@keyframes wcCounter { from { transform: rotate(calc(-1 * var(--a))); } to { transform: rotate(calc(-1 * var(--a) - 360deg)); } }
+
+/* Light sweep */
+.wc-shine { position: absolute; z-index: 5; top: -50%; bottom: -50%; left: -40%; width: 26%; transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent); animation: wcShine 7s ease-in-out infinite; }
+@keyframes wcShine { 0%, 55% { left: -40%; } 85%, 100% { left: 130%; } }
+
+/* Content above the effects */
+.welcome-card[data-wc] > :not(.wc-fx) { position: relative; z-index: 7; }
+.welcome-card[data-wc] h2 { text-shadow: 0 2px 18px rgba(40, 10, 120, .35); }
+
+/* Paused while off screen */
+.welcome-card[data-wc]:not(.is-live) .wc-fx *, .welcome-card[data-wc]:not(.is-live) .wc-fx::after { animation-play-state: paused !important; }
+
+@media (max-width: 767.98px) {
+  .wc-orbit { right: -120px; opacity: .55; transform: scale(.85); }
+  .wc-fx::after { background: linear-gradient(90deg, rgba(76,44,190,.7), rgba(76,44,190,.4) 70%, rgba(76,44,190,.2)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wc-fx *, .wc-fx *::before, .wc-fx *::after { animation: none !important; transition: none !important; }
+  .wc-shine { display: none; }
+}
